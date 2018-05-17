@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Pask</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <script>
+        const log = console.log
+        const m = require('mithril')
+        const moment = require('moment')
+        const Dat = require('dat-node')
+        const fs = require('fs')
+
+        const model = require('./model.js')
+        const controller = require('./controller.js')
+        const connection = require('./connection')
+
+        require('./renderer.js')
+    </script>
+  </body>
+</html>
