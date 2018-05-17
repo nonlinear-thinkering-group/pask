@@ -1,5 +1,5 @@
 module.exports = {
-    archive: undefined,
+    archives: undefined,
     input: "",
     my_key: "",
     messages: {

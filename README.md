@@ -11,11 +11,11 @@ npm install && npm start
 set your name using
 
 ```
-/name *name*
+/name yourname
 ```
 
 connect to a peer using
 
 ```
-/listen *key*
+/listen key
 ```

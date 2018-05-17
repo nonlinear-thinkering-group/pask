@@ -3,7 +3,7 @@ var hyperdrive = require('hyperdrive')
 var discovery = require('hyperdiscovery')
 var hypercore = require('hypercore')
 
-var reading_archive, writing_archive;
+var writing_archive;
 
 
 module.exports = {
@@ -16,24 +16,31 @@ module.exports = {
             sw.on('connection', function (peer, type) {
                 console.log('writer connected to', sw.connections.length, 'peers')
             })
+
+            writing_archive.readFile('/messages.json', 'utf-8', function (err, data) {
+                if (err) throw err
+                model.messages.here = JSON.parse(data)
+                controller.mergeMessages()
+            })
         })
     },
     listen: (key)=>{
-        reading_archive = hyperdrive("./dat/"+key, key)
+        var reading_archive = hyperdrive("./dat/"+key, key)
         reading_archive.ready(function () {
             var sw = discovery(reading_archive,{download: true})
             sw.on('connection', function (peer, type) {
                 console.log('reader connected to', sw.connections.length, 'peers')
             })
             reading_archive.content.on("sync", function(){
-                module.exports.read(key)
+                module.exports.read(reading_archive, key)
             })
+            module.exports.read(reading_archive, key)
         })
     },
-    read: (key)=> {
+    read: (archive, key)=> {
         //TODO: fix this!!!
         setTimeout(function(){
-            reading_archive.readFile('/messages.json', 'utf-8', function (err, data) {
+            archive.readFile('/messages.json', 'utf-8', function (err, data) {
                 if (err) throw err
                 console.log(data)
                 model.messages.remote[key] = JSON.parse(data)
