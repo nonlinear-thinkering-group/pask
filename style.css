@@ -7,6 +7,26 @@ html, body, main {
     overflow: hidden;
 }
 
+img {
+  width: 100%;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+blockquote {
+  color: gray;
+  border-left: 2px solid gray;
+  margin: 1rem 0;
+  padding: 0 0 0 1rem;
+}
+
+ul, ol {
+  margin: 1rem 0 1rem 1rem;
+  padding: 0 0 0 1rem;
+}
+
 .key {
     text-align: right;
     font-size: 8pt;
@@ -49,5 +69,4 @@ input {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
-
 }
