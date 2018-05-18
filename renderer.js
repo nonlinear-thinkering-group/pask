@@ -77,16 +77,17 @@ const App = {
 }
 
 var mapping = model.newnode("Mapping")
+var ambience = model.newnode("Ambience")
+
 var t = model.newthread(mapping)
 model.addtothread(t, model.newnode("Mapping is a *very* important topic"))
 model.addtothread(t, model.newnode("Yes yes it is"))
 
-t = model.newthread(mapping)
-model.addtothread(t, model.newnode("new thread, what about critical mapping?"))
+t = model.newthread(mapping, ambience)
+model.addtothread(t, model.newnode("new thread, what about ambient mapping?"))
 model.addtothread(t, model.newnode("kritikal"))
 model.addtothread(t, model.newnode("__totally__"))
 
-var ambience = model.newnode("Ambience")
 t = model.newthread(ambience)
 model.addtothread(t, model.newnode("lol"))
 

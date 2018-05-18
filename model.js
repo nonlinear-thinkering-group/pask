@@ -38,11 +38,12 @@ var model = {
         model.localdata.nodes[n.id] = n
         return n
     },
-    newthread: (n)=>{
-        var id = n
-        if (n.id) {id=n.id}
+    newthread: (...args)=>{
+        var ids = args.map((a)=>{
+            return a.id
+        })
         var t = {
-            topics: [id],
+            topics: ids,
             id: crypt.randomString(64),
             nodes: [],
         }
