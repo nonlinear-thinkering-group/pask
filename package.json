@@ -13,6 +13,7 @@
     "dat-node": "^3.5.8",
     "hyperdiscovery": "^7.1.0",
     "hyperdrive": "^9.12.3",
+    "markdown-it": "^8.4.1",
     "mirror-folder": "^3.0.0",
     "mithril": "^1.1.6",
     "moment": "^2.22.1",
