@@ -29,7 +29,8 @@ const Hello = {
         ])
     }
 }
-
-m.mount(document.body, Hello)
 connection.publish()
 controller.loadlisteners()
+setTimeout(()=>{
+    m.mount(document.body, Hello)
+},1000)

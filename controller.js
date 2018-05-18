@@ -52,7 +52,6 @@ module.exports = {
 
         for(var key in model.messages.remote){
             var other = model.messages.remote[key];
-            console.log(other.map)
             model.messages.merged = model.messages.merged.concat(other.map((m)=>{
                 module.exports.command(m.text, key)
                 return {

@@ -42,7 +42,6 @@ module.exports = {
         setTimeout(function(){
             archive.readFile('/messages.json', 'utf-8', function (err, data) {
                 if (err) throw err
-                console.log(data)
                 model.messages.remote[key] = JSON.parse(data)
                 controller.mergeMessages()
             })
