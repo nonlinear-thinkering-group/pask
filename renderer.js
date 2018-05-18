@@ -5,6 +5,15 @@ const md = require('markdown-it')({
   linkify: true
 });
 
+var mila = require('markdown-it-link-attributes')
+
+md.use(mila, {
+  attrs: {
+    target: '_blank',
+    rel: 'noopener'
+  }
+})
+
 const Message = {
     view: (vnode) => {
         const message = vnode.attrs
