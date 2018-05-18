@@ -17,6 +17,7 @@
     "mirror-folder": "^3.0.0",
     "mithril": "^1.1.6",
     "moment": "^2.22.1",
-    "random-access-memory": "^3.0.0"
+    "random-access-memory": "^3.0.0",
+    "underscore": "^1.9.0"
   }
 }
