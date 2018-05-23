@@ -9,7 +9,7 @@ const url = require('url')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow, tray
 
 function createWindow () {
   // Create the browser window.
@@ -37,6 +37,16 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  /*
+  tray = new electron.Tray('icon.png')
+  const contextMenu = electron.Menu.buildFromTemplate([
+      {label: 'reload'},
+      {label: 'close'},
+    ])
+  tray.setToolTip('This is my application.')
+  tray.setContextMenu(contextMenu)
+*/
 }
 
 // This method will be called when Electron has finished

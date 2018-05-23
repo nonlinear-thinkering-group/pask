@@ -8,5 +8,6 @@ module.exports = {
         merged: []
     },
     names: {},
+    online: [],
     listening: []
 }

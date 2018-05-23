@@ -23,7 +23,9 @@ const Hello = {
             }, model.messages.merged.map((message)=>{
                 return m(".message", [
                     m("span.message-date", moment(message.date).format('DD-MM-YY HH:mm')),
-                    m("span.message-user", "@"+ model.names[message.user]),
+                    m("span.message-user", {
+                        class: (model.online.indexOf(message.user)>-1)?"online":"offline"
+                    },"@"+ model.names[message.user]),
                     m("div.message-text", m.trust( md.render(message.text) )),
                 ])
             })),

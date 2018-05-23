@@ -14,7 +14,14 @@ module.exports = {
             m.redraw()
             var sw = discovery(writing_archive,{upload: true})
             sw.on('connection', function (peer, type) {
+                const peerkey = peer.key.toString('hex')
                 console.log('writer connected to', sw.connections.length, 'peers')
+                model.online.push(peerkey)
+                peer.on('close', function () {
+                    model.online.splice(model.online.indexOf(peerkey), 1)
+                    m.redraw()
+                })
+
             })
 
             writing_archive.readFile('/messages.json', 'utf-8', function (err, data) {
@@ -29,7 +36,14 @@ module.exports = {
         reading_archive.ready(function () {
             var sw = discovery(reading_archive,{download: true})
             sw.on('connection', function (peer, type) {
+                const peerkey = peer.key.toString('hex')
                 console.log('reader connected to', sw.connections.length, 'peers')
+                model.online.push(peerkey)
+                peer.on('close', function () {
+                    model.online.splice(model.online.indexOf(peerkey), 1)
+                    m.redraw()
+                })
+
             })
             reading_archive.content.on("sync", function(){
                 module.exports.read(reading_archive, key)

@@ -72,6 +72,13 @@ ul, ol {
     margin-right: 10px;
 }
 
+.online {
+    color: green;
+}
+
+.offline {
+    color: red;
+}
 
 input {
     position: absolute;
