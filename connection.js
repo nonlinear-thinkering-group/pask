@@ -47,6 +47,9 @@ module.exports = {
             })
             reading_archive.content.on("sync", function(){
                 module.exports.read(reading_archive, key)
+                new Notification('PASK', {
+                    body: 'new message!'
+                })
             })
             module.exports.read(reading_archive, key)
         })
