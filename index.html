@@ -28,6 +28,11 @@
         //connection.publish()
         //controller.loadlisteners()
         require('./renderer.js')
+
+        var ipcRenderer = require('electron').ipcRenderer;
+        ipcRenderer.on('db-ready', function (event,store) {
+            console.log(store);
+        });
     </script>
   </body>
 </html>

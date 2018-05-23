@@ -1,9 +1,10 @@
 const electron = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
-
 const path = require('path')
 const url = require('url')
+
+const database = require('./database')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -50,9 +51,17 @@ function createTray(){
     })
 }
 
+function listendat(){
+    database.connect()
+    database.on('ready', ()=>{
+        console.log(database.getKey())
+    })
+}
+
 app.on('ready', ()=>{
     createWindow()
     createTray()
+    listendat()
 })
 
 // Quit when all windows are closed.
