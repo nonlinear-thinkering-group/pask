@@ -19,3 +19,14 @@ connect to a peer using
 ```
 /listen key
 ```
+
+## config
+
+Set your configuration in the config.json file.
+
+```
+{
+    "debug": true, //show the console on startup
+}
+
+```

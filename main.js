@@ -1,6 +1,11 @@
+const config = require('./config.json')
+
 const electron = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
+const Tray = electron.Tray
+const Menu = electron.Menu
+
 const path = require('path')
 const url = require('url')
 
@@ -14,7 +19,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
   mainWindow.setMenu(null);
-  mainWindow.webContents.openDevTools()
+  if(config.debug) mainWindow.webContents.openDevTools()
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
@@ -32,8 +37,8 @@ function createWindow () {
 }
 
 function createTray(){
-    tray = new electron.Tray('icon.png')
-    const contextMenu = electron.Menu.buildFromTemplate([
+    tray = new Tray('icon.png')
+    const contextMenu = Menu.buildFromTemplate([
         {
             label: 'quit',
             click: ()=>{
@@ -41,27 +46,34 @@ function createTray(){
             }
         },
       ])
-    tray.setToolTip('This is my application.')
+    tray.setToolTip('Pask is syncing')
     tray.setContextMenu(contextMenu)
 
     tray.on('click', ()=>{
         if (mainWindow === null) {
           createWindow()
+          setTrayMessage(false)
         }
     })
 }
 
-function listendat(){
+function setTrayMessage(sw){
+    tray.setImage(sw?'icon_message.png':'icon.png')
+}
+
+function listenDat(){
     database.connect()
-    database.on('ready', ()=>{
-        console.log(database.getKey())
+    database.on('ready', (k)=>{
+        console.log(k)
+        //setTrayMessage(true)
     })
+
 }
 
 app.on('ready', ()=>{
     createWindow()
     createTray()
-    listendat()
+    listenDat()
 })
 
 // Quit when all windows are closed.
