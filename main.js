@@ -73,7 +73,8 @@ function setTrayMessage(sw){
 }
 
 function showNotification(){
-    if(config.notifications){
+    if(config.notifications && !mainWindow || !mainWindow.isFocused()){
+        setTrayMessage(true)
         var n = new Notification({
             title: "Pask",
             body: "New messages!"
@@ -131,7 +132,6 @@ function connectDat(){
         if(mainWindow){
             mainWindow.webContents.send('messages', a)
         }
-        setTrayMessage(true)
         showNotification()
     })
 }
