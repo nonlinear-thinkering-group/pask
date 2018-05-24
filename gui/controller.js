@@ -1,4 +1,5 @@
 var publish_dat;
+var ipc = require('electron').ipcRenderer;
 
 module.exports = {
     message: (message)=>{
@@ -6,28 +7,40 @@ module.exports = {
         if(message.charAt(0)==="/"){
             write = module.exports.command(message, model.my_key)
         }
+
         if(write){
-            model.messages.here.push({
+            const me = {
                 text: message,
-                date: new Date()
-            })
-            connection.write(JSON.stringify(model.messages.here))
-            module.exports.mergeMessages()
+                date: new Date(),
+                user: model.my_key
+            }
+            ipc.send('message', me)
+            //model.messages.here.push(me)
+            //ipc.send('message', me)
+            //connection.write(JSON.stringify(model.messages.here))
+            //module.exports.mergeMessages()
         }
 
     },
     command: (message, key)=>{
         const cmd = message.split(" ")
-        if(cmd[0]==="/name"){
-            model.names[key] = cmd[1]
-            return true
+        if(cmd[0]==="/host"){
+            ipc.send('new-space', cmd[1])
+            return false
         }
-        if(cmd[0]==="/listen"){
-            model.listening.push(cmd[1])
-            fs.writeFile("./dat/listening.json", JSON.stringify(model.listening), (err)=>{
-                if(err) throw err
-            })
-            connection.listen(cmd[1])
+
+        if(cmd[0]==="/join"){
+            ipc.send('listen-space', cmd[1])
+            return false
+        }
+
+        if(cmd[0]==="/auth"){
+            ipc.send('set-auth', cmd[1])
+            return false
+        }
+
+        if(cmd[0]==="/name"){
+            ipc.send('set-name', cmd[1])
             return false
         }
     },

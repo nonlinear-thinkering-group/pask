@@ -1,0 +1,28 @@
+var ipc = require('electron').ipcRenderer;
+
+module.exports = {
+    input: "", //value of input field
+    my_key: "", // current key
+    messages: [], // all the messages
+    names: {}, // maps keys to usernames
+    online: [], // array of online users
+}
+
+//sync events
+ipc.on('load-space', (e, key) => {
+    console.log(key)
+    model.my_key = key
+    m.redraw()
+})
+
+ipc.on('names', (e, names) => {
+    model.names = _.object(names)
+    console.log(names)
+    m.redraw()
+})
+
+ipc.on('messages', (e, messages) => {
+    model.messages = messages
+    console.log(messages)
+    m.redraw()
+})

@@ -17,22 +17,15 @@
     <script>
         const log = console.log
         const m = require('mithril')
+        const _ = require('underscore')
         const moment = require('moment')
         const Dat = require('dat-node')
         const fs = require('fs')
 
         const model = require('./model.js')
         const controller = require('./controller.js')
-        //const connection = require('./connection')
-        const connection = require('./connection')
-        //connection.publish()
-        //controller.loadlisteners()
+        
         require('./renderer.js')
-
-        var ipcRenderer = require('electron').ipcRenderer;
-        ipcRenderer.on('db-ready', function (event,store) {
-            console.log(store);
-        });
     </script>
   </body>
 </html>

@@ -5,6 +5,7 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const Tray = electron.Tray
 const Menu = electron.Menu
+const ipc = electron.ipcMain;
 
 const path = require('path')
 const url = require('url')
@@ -21,7 +22,7 @@ function createWindow () {
   mainWindow.setMenu(null);
   if(config.debug) mainWindow.webContents.openDevTools()
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, 'gui/index.html'),
     protocol: 'file:',
     slashes: true
   }))
@@ -61,19 +62,46 @@ function setTrayMessage(sw){
     tray.setImage(sw?'icon_message.png':'icon.png')
 }
 
-function listenDat(){
-    database.connect()
-    database.on('ready', (k)=>{
-        console.log(k)
-        //setTrayMessage(true)
+function connectDat(){
+    //incoming messages
+    ipc.on('new-space', (e, arg) => {
+        database.create(arg)
     })
 
+    ipc.on('listen-space', (e, arg) => {
+        database.listen(arg)
+    })
+
+    ipc.on('set-name', (e, arg) => {
+        database.setName(arg)
+    })
+
+    ipc.on('set-auth', (e, arg) => {
+        database.setAuth(arg)
+    })
+
+    ipc.on('message', (e, arg) => {
+        database.message(arg)
+    })
+
+    //messages to renderer
+    database.on('load-space', (a)=>{
+        mainWindow.webContents.send('load-space', a)
+    })
+
+    database.on('names', (a)=>{
+        mainWindow.webContents.send('names', a)
+    })
+
+    database.on('messages', (a)=>{
+        mainWindow.webContents.send('messages', a)
+    })
 }
 
 app.on('ready', ()=>{
     createWindow()
     createTray()
-    listenDat()
+    connectDat()
 })
 
 // Quit when all windows are closed.
