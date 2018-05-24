@@ -5,6 +5,7 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const Tray = electron.Tray
 const Menu = electron.Menu
+const Notification = electron.Notification
 const ipc = electron.ipcMain;
 
 const path = require('path')
@@ -58,8 +59,31 @@ function createTray(){
     })
 }
 
+function focusWindow(){
+    if(mainWindow === null){
+        createWindow()
+    } else {
+        mainWindow.focus()
+    }
+
+}
+
 function setTrayMessage(sw){
     tray.setImage(sw?'icon_message.png':'icon.png')
+}
+
+function showNotification(){
+    if(config.notifications){
+        var n = new Notification({
+            title: "Pask",
+            body: "New messages!"
+        })
+        n.on('click', ()=>{
+            focusWindow()
+            setTrayMessage(false)
+        })
+        n.show()
+    }
 }
 
 function connectDat(){
@@ -84,17 +108,31 @@ function connectDat(){
         database.message(arg)
     })
 
+    ipc.on('sync', (e, arg) => {
+        database.getKey()
+        database.getNames()
+        database.getMessages()
+    })
+
     //messages to renderer
     database.on('load-space', (a)=>{
-        mainWindow.webContents.send('load-space', a)
+        if(mainWindow){
+            mainWindow.webContents.send('load-space', a)
+        }
     })
 
     database.on('names', (a)=>{
-        mainWindow.webContents.send('names', a)
+        if(mainWindow){
+            mainWindow.webContents.send('names', a)
+        }
     })
 
     database.on('messages', (a)=>{
-        mainWindow.webContents.send('messages', a)
+        if(mainWindow){
+            mainWindow.webContents.send('messages', a)
+        }
+        setTrayMessage(true)
+        showNotification()
     })
 }
 

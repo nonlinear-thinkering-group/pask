@@ -44,40 +44,15 @@ module.exports = {
             return false
         }
     },
-    loadlisteners: ()=>{
-        fs.readFile("./dat/listening.json", "utf8", (err, data)=>{
-            if(err) throw err
-            model.listening = JSON.parse(data)
-            model.listening.map((o)=>{
-                connection.listen(o)
-            })
-        })
-    },
-    mergeMessages: ()=>{
-        model.messages.merged = model.messages.here.map((m)=>{
-            module.exports.command(m.text, model.my_key)
-            return {
-                user: model.my_key,
-                text: m.text,
-                date: new Date(m.date)
-            }
-        })
-
-        for(var key in model.messages.remote){
-            var other = model.messages.remote[key];
-            model.messages.merged = model.messages.merged.concat(other.map((m)=>{
-                module.exports.command(m.text, key)
-                return {
-                    user: key,
-                    text: m.text,
-                    date: new Date(m.date)
-                }
-            }))
-        }
-        model.messages.merged = model.messages.merged.sort((a,b)=>{
-            return a.date-b.date;
-        })
-
-        m.redraw()
-    }
+    //loadlisteners: ()=>{
+    //    fs.readFile("./dat/listening.json", "utf8", (err, data)=>{
+    //        if(err) throw err
+    //        model.listening = JSON.parse(data)
+    //        model.listening.map((o)=>{
+    //            connection.listen(o)
+    //        })
+    //    })
+    //},
 }
+
+ipc.send('sync') //attempt to load data

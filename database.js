@@ -33,8 +33,8 @@ function connect(db){
             })
         })
 
-
-        ev.emit('load-space', lkey)
+        //broadcast everything
+        getKey()
         getNames()
         getMessages()
 
@@ -49,15 +49,23 @@ function connect(db){
     })
 }
 
+function getKey(){
+    if(db){
+        ev.emit('load-space', lkey)
+    }
+}
+
 function getNames(){
-    db.list('/names/', (err, l)=>{
-        var names = l.map((node)=>{
-            return [
-                node[0].key.split("/")[1], node[0].value
-            ]
+    if(db){
+        db.list('/names/', (err, l)=>{
+            var names = l.map((node)=>{
+                return [
+                    node[0].key.split("/")[1], node[0].value
+                ]
+            })
+            ev.emit('names', names)
         })
-        ev.emit('names', names)
-    })
+    }
 }
 
 function setName(name){
@@ -75,12 +83,14 @@ function setAuth(key){
 }
 
 function getMessages(){
-    db.list('/messages/', (err, l)=>{
-        var messages = l.map((node)=>{
-            return JSON.parse(node[0].value)
+    if(db){
+        db.list('/messages/', (err, l)=>{
+            var messages = l.map((node)=>{
+                return JSON.parse(node[0].value)
+            })
+            ev.emit('messages', messages)
         })
-        ev.emit('messages', messages)
-    })
+    }
 }
 
 function message(message){
@@ -101,6 +111,7 @@ function on(tag, callback){
 module.exports = {
     create: create,
     listen: listen,
+    getKey: getKey,
     getNames: getNames,
     setName: setName,
     setAuth: setAuth,
