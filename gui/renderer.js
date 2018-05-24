@@ -16,7 +16,6 @@ const Hello = {
     view: () => {
         return m("main", [
             m(".key", "your key: "+model.my_key),
-            m(".key", "name: "+ model.names[model.my_key]),
             m(".messages", {
                 onupdate: (vnode)=>{
                     vnode.dom.scrollTo(0,vnode.dom.scrollHeight);
