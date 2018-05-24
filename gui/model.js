@@ -22,7 +22,9 @@ ipc.on('names', (e, names) => {
 })
 
 ipc.on('messages', (e, messages) => {
-    model.messages = messages
+    model.messages = messages.sort((a,b)=>{
+        return new Date(a.date) - new Date(b.date)
+    })
     console.log(messages)
     m.redraw()
 })
