@@ -10,14 +10,16 @@
     "electron": "^2.0.0"
   },
   "dependencies": {
+    "cryptiles": "^4.1.1",
     "dat-node": "^3.5.8",
+    "hyperdb": "^3.0.0-4",
     "hyperdiscovery": "^7.1.0",
-    "hyperdrive": "^9.12.3",
     "markdown-it": "^8.4.1",
     "markdown-it-link-attributes": "^2.1.0",
     "mirror-folder": "^3.0.0",
     "mithril": "^1.1.6",
     "moment": "^2.22.1",
-    "random-access-memory": "^3.0.0"
+    "random-access-memory": "^3.0.0",
+    "underscore": "^1.9.0"
   }
 }

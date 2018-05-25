@@ -1,23 +1,29 @@
+const config = require('./config.json')
+
 const electron = require('electron')
-// Module to control application life.
 const app = electron.app
-// Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+const Tray = electron.Tray
+const Menu = electron.Menu
+const Notification = electron.Notification
+const ipc = electron.ipcMain;
 
 const path = require('path')
 const url = require('url')
+
+const database = require('./database')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow, tray
 
 function createWindow () {
-  // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600})
-  //mainWindow.setMenu(null);
-  // and load the index.html of the app.
+
+  mainWindow.setMenu(null);
+  if(config.debug) mainWindow.webContents.openDevTools()
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, 'gui/index.html'),
     protocol: 'file:',
     slashes: true
   }))
@@ -27,49 +33,124 @@ function createWindow () {
     electron.shell.openExternal(url);
   });
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-
-  // Emitted when the window is closed.
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null
   })
-
-  /*
-  tray = new electron.Tray('icon.png')
-  const contextMenu = electron.Menu.buildFromTemplate([
-      {label: 'reload'},
-      {label: 'close'},
-    ])
-  tray.setToolTip('This is my application.')
-  tray.setContextMenu(contextMenu)
-*/
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+function createTray(){
+    tray = new Tray('icon.png')
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'quit',
+            click: ()=>{
+                app.quit()
+            }
+        },
+      ])
+    tray.setToolTip('Pask is syncing')
+    tray.setContextMenu(contextMenu)
+
+    tray.on('click', ()=>{
+        if (mainWindow === null) {
+          createWindow()
+          setTrayMessage(false)
+        }
+    })
+}
+
+function focusWindow(){
+    if(mainWindow === null){
+        createWindow()
+    } else {
+        mainWindow.focus()
+    }
+
+}
+
+function setTrayMessage(sw){
+    tray.setImage(sw?'icon_message.png':'icon.png')
+}
+
+function showNotification(){
+    if(config.notifications && !mainWindow || !mainWindow.isFocused()){
+        setTrayMessage(true)
+        var n = new Notification({
+            title: "Pask",
+            body: "New messages!"
+        })
+        n.on('click', ()=>{
+            focusWindow()
+            setTrayMessage(false)
+        })
+        n.show()
+    }
+}
+
+function connectDat(){
+    //incoming messages
+    ipc.on('new-space', (e, arg) => {
+        database.create(arg)
+    })
+
+    ipc.on('listen-space', (e, arg) => {
+        database.listen(arg)
+    })
+
+    ipc.on('set-name', (e, arg) => {
+        database.setName(arg)
+    })
+
+    ipc.on('set-auth', (e, arg) => {
+        database.setAuth(arg)
+    })
+
+    ipc.on('message', (e, arg) => {
+        database.message(arg)
+    })
+
+    ipc.on('sync', (e, arg) => {
+        database.getKey()
+        database.getNames()
+        database.getMessages()
+    })
+
+    //messages to renderer
+    database.on('load-space', (a)=>{
+        if(mainWindow){
+            mainWindow.webContents.send('load-space', a)
+        }
+    })
+
+    database.on('names', (a)=>{
+        if(mainWindow){
+            mainWindow.webContents.send('names', a)
+        }
+    })
+
+    database.on('messages', (a)=>{
+        if(mainWindow){
+            mainWindow.webContents.send('messages', a)
+        }
+        showNotification()
+    })
+}
+
+app.on('ready', ()=>{
+    createWindow()
+    createTray()
+    connectDat()
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit()
+//    app.quit()
   }
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
